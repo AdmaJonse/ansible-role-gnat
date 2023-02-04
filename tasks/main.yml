@@ -1,0 +1,49 @@
+- name: Install prerequisites with apt
+  apt:
+    pkg:
+      - make
+      - libfontconfig
+      - libx11-dev
+      - xserver-xorg-dev
+      - xorg-dev
+  become: true
+
+- name: Check if the GNAT directory already exists
+  stat:
+    path: "{{ gnat_local_path }}"
+  register: gnat_dir
+
+- name: Download GNAT Community resources
+  get_url: 
+    url: "{{ gnat_download_url }}"
+    dest: "{{ gnat_download_path }}"
+  when: not gnat_dir.stat.exists
+
+- name: Ensure GNAT directory exists
+  file:
+    path: "{{ gnat_local_path }}"
+    state: directory
+    owner: vagrant
+    group: vagrant
+  when: not gnat_dir.stat.exists
+  become: true
+
+- name: Clone GNAT Community installation scripts
+  git:
+    repo: "{{ gnat_install_repo }}"
+    dest: "{{ gnat_install_path }}"
+    accept_hostkey: yes
+  when: not gnat_dir.stat.exists
+
+- name: Install GNAT Community using installation script
+  shell:
+    cmd: "./install_package.sh {{ gnat_download_path }} {{ gnat_local_path }}"
+    chdir: "{{ gnat_install_path }}"
+  when: not gnat_dir.stat.exists
+  become: true
+
+- name: Add GNAT binaries to PATH
+  copy:
+    dest: /etc/profile.d/gnat.sh
+    content: 'PATH={{ gnat_local_path }}/bin:$PATH'
+  become: true

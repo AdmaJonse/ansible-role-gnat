@@ -1,0 +1,7 @@
+---
+
+gnat_download_url: https://community.download.adacore.com/v1/f3a99d283f7b3d07293b2e1d07de00e31e332325?filename=gnat-2021-20210519-x86_64-linux-bin
+gnat_download_path: /tmp/gnat-2021-x86_64-linux-bin
+gnat_install_repo: https://github.com/AdaCore/gnat_community_install_script.git
+gnat_install_path: /tmp/gnat-community-install
+gnat_local_path: "/opt/gnat"
